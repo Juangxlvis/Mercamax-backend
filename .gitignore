@@ -1,0 +1,10 @@
+# .gitignore
+
+# Entorno virtual
+venv/
+
+# Archivo de secretos
+.env
+
+# Base de datos de desarrollo
+db.sqlite3
