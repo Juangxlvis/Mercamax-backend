@@ -1,4 +1,5 @@
 # users/views.py
+import pyotp
 from django.shortcuts import render
 from django.contrib.auth.models import User
 from django.contrib.auth.tokens import default_token_generator
@@ -8,20 +9,15 @@ from django.utils.encoding import force_bytes, force_str
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
-import pyotp
 from rest_framework import generics, status
-from rest_framework.response import Response
-
 from .permissions import IsAdminUser, IsTempTokenAuthenticated
 from .serializers import InviteUserSerializer, LoginSerializer, RolSerializer, CustomPasswordResetSerializer
 from core.models import TrustedDevice, PerfilUsuario
-
-from rest_framework.permissions import AllowAny 
 from rest_framework.views import APIView
-from rest_framework import generics, status
 from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
+
 
 
 class InviteUserView(generics.CreateAPIView):
@@ -75,6 +71,7 @@ class InviteUserView(generics.CreateAPIView):
             return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 class LoginView(APIView):
+    permission_classes = [AllowAny]
     def post(self, request):
         serializer = LoginSerializer(data=request.data)
         if serializer.is_valid():
@@ -129,6 +126,7 @@ class LoginView(APIView):
 
 
 class RolListView(APIView):
+    permission_classes = [AllowAny]
     def get(self, request):
         # Convertir PerfilUsuario.ROLES a formato esperado por el frontend
         roles = [{'value': value, 'view_value': view_value} for value, view_value in PerfilUsuario.ROLES]
@@ -195,6 +193,7 @@ class ValidateTokenView(APIView):
 
 
 class ForgotPasswordView(APIView):
+    permission_classes = [AllowAny]
     """
     Solicitar reset de contraseña: envía correo con enlace
     """
@@ -223,6 +222,7 @@ class ForgotPasswordView(APIView):
 
 
 class ResetPasswordConfirmView(APIView):
+    permission_classes = [AllowAny]
     def post(self, request, uidb64, token):
         try:
             uid = urlsafe_base64_decode(uidb64).decode()

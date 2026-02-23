@@ -1,7 +1,7 @@
 # inventario/urls.py
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from .views import ProveedorViewSet, ProductoViewSet, CategoriaProductoListView, inventario_estadisticas
+from .views import ProveedorViewSet, ProductoViewSet, CategoriaProductoListView, inventario_estadisticas, ReporteRotacionView
 
 router = DefaultRouter()
 router.register(r'proveedores', ProveedorViewSet)
@@ -11,4 +11,5 @@ urlpatterns = [
     path('', include(router.urls)),
     path('categorias/', CategoriaProductoListView.as_view(), name='categorias-list'),
     path('estadisticas/', inventario_estadisticas, name='inventario-estadisticas'),
+    path('reportes/rotacion/', ReporteRotacionView.as_view(), name='reporte-rotacion'),
 ]
