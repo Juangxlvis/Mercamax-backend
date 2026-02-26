@@ -44,7 +44,7 @@ class Producto(models.Model):
         
         # Multiplicamos la cantidad de cajas por lo que costó ese lote en específico
         resultado = StockItem.objects.filter(lote__producto=self).aggregate(
-            valor_total=Sum(F('cantidad') * F('lote__costo_compra_lote')),
+            valor_total=Sum(F('cantidad') * F('lote__costo_unitario')),
             cantidad_total=Sum('cantidad')
         )
         

@@ -96,7 +96,7 @@ class ReporteRotacionView(APIView):
             fecha_inicio = timezone.now() - timedelta(days=dias)
 
             valor_inventario_actual = StockItem.objects.aggregate(
-                total=Sum(F('cantidad') * F('lote__costo_compra_lote'))
+                total=Sum(F('cantidad') * F('lote__costo_unitario'))
             )['total'] or 1 
 
             
