@@ -8,3 +8,6 @@ venv/
 
 # Base de datos de desarrollo
 db.sqlite3
+
+#Ignora la carpeta staticfiles
+staticfiles/

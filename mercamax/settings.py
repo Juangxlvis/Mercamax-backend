@@ -36,16 +36,6 @@ DEBUG = os.getenv('DEBUG', 'False') == 'True'
 # Pon esto debajo de DEBUG
 ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '127.0.0.1').split(',')
 
-sentry_sdk.init(
-    dsn="https://b22715d7d636ae36d8a746f840b89bce@o4509976913575936.ingest.us.sentry.io/4509976914886656", # <-- Pega la DSN que te dio Sentry
-    # Set traces_sample_rate to 1.0 to capture 100%
-    # of transactions for performance monitoring.
-    traces_sample_rate=1.0,
-    # Set profiles_sample_rate to 1.0 to profile 100%
-    # of sampled transactions for slow queries.
-    profiles_sample_rate=1.0,
-)
-
 
 # Application definition
 
@@ -64,7 +54,7 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'dj_rest_auth',
     #Para el registro
-     'django.contrib.sites',
+    'django.contrib.sites',
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
@@ -75,10 +65,10 @@ INSTALLED_APPS = [
     'bodega.apps.BodegaConfig',
 ]
 
-MIDDLEWARE = [
+MIDDLEWARE = [  
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware', 
-    'corsheaders.middleware.CorsMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -176,6 +166,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:4200",
+    "http://127.0.0.1:4200",
     "https://mercamax-frontend.vercel.app", # Puerto por defecto de Angular
 ]
 
@@ -221,4 +212,14 @@ ACCOUNT_ADAPTER = "allauth_2fa.adapter.OTPAdapter"
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
     'allauth.account.auth_backends.AuthenticationBackend',
+)
+
+sentry_sdk.init(
+    dsn="https://b22715d7d636ae36d8a746f840b89bce@o4509976913575936.ingest.us.sentry.io/4509976914886656", # <-- Pega la DSN que te dio Sentry
+    # Set traces_sample_rate to 1.0 to capture 100%
+    # of transactions for performance monitoring.
+    traces_sample_rate=1.0,
+    # Set profiles_sample_rate to 1.0 to profile 100%
+    # of sampled transactions for slow queries.
+    profiles_sample_rate=1.0,
 )
