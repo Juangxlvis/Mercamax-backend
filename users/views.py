@@ -1,5 +1,6 @@
 # users/views.py
 import pyotp
+import threading
 from django.shortcuts import render
 from django.contrib.auth.models import User
 from django.contrib.auth.tokens import default_token_generator
@@ -18,7 +19,26 @@ from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
 from rest_framework.permissions import IsAuthenticated, AllowAny
 
+class EmailThread(threading.Thread):
+    def __init__(self, subject, message, from_email, recipient_list):
+        self.subject = subject
+        self.message = message
+        self.from_email = from_email
+        self.recipient_list = recipient_list
+        threading.Thread.__init__(self)
 
+    def run(self):
+        try:
+            send_mail(
+                self.subject, 
+                self.message, 
+                self.from_email, 
+                self.recipient_list,
+                fail_silently=False
+            )
+            print(f"Email asíncrono enviado exitosamente a {self.recipient_list}")
+        except Exception as e:
+            print(f"Error enviando email asíncrono a {self.recipient_list}: {str(e)}")
 
 class InviteUserView(generics.CreateAPIView):
     """
@@ -54,13 +74,13 @@ class InviteUserView(generics.CreateAPIView):
             activation_link = f"http://localhost:4200/activar-cuenta/{uid}/{token}" # URL del frontend
 
             # 4. Enviar el correo
-            send_mail(
+            # 4. Enviar el correo
+            EmailThread(
                 '¡Bienvenido a MercaMax! Activa tu cuenta',
                 f'Hola {user.first_name},\n\nPor favor, haz clic en el siguiente enlace para activar tu cuenta y establecer tu contraseña:\n\n{activation_link}\n\nGracias,\nEl equipo de MercaMax.',
                 settings.DEFAULT_FROM_EMAIL,
-                [user.email],
-                fail_silently=False,
-            )
+                [user.email]
+            ).start()
 
             return Response({'detail': 'Invitación enviada exitosamente.'}, status=status.HTTP_201_CREATED)
 
@@ -105,14 +125,13 @@ class LoginView(APIView):
                 totp = pyotp.TOTP(secret, interval=300)  # 5 min
                 code = totp.now()
 
-                send_mail(
+                # NUEVO CÓDIGO (Asíncrono y ultra rápido)
+                EmailThread(
                     subject="Tu código de verificación MercaMax",
                     message=f"Hola {user.first_name},\n\nTu código de verificación es: {code}\n\nExpira en 5 minutos.",
                     from_email=settings.DEFAULT_FROM_EMAIL,
-                    recipient_list=[user.email],
-                    fail_silently=False
-                )
-                print(f"Email sent successfully to {user.email}")
+                    recipient_list=[user.email]
+                ).start() # <--- El .start() es la magia que lanza el hilo
 
                 temp_token, _ = Token.objects.get_or_create(user=user)
 
@@ -208,13 +227,13 @@ class ForgotPasswordView(APIView):
         reset_link = f"http://localhost:4200/reset-password-confirm/{uid}/{token}"  # link del frontend
 
         # Enviar correo
-        send_mail(
-            'Restablece tu contraseña en MercaMax',
-            f'Hola {user.first_name},\n\nHaz clic en el siguiente enlace para restablecer tu contraseña:\n{reset_link}\n\nSi no solicitaste este cambio, ignora este correo.',
-            settings.DEFAULT_FROM_EMAIL,
-            [user.email],
-            fail_silently=False,
-        )
+        # 4. Enviar el correo
+        EmailThread(
+                '¡Bienvenido a MercaMax! Activa tu cuenta',
+                f'Hola {user.first_name},\n\nPor favor, haz clic en el siguiente enlace para activar tu cuenta y establecer tu contraseña:\n\n{activation_link}\n\nGracias,\nEl equipo de MercaMax.',
+                settings.DEFAULT_FROM_EMAIL,
+                [user.email]
+        ).start()
         from core.models import PasswordResetRequest
         PasswordResetRequest.objects.create (user = user, email_sent = True)
 
