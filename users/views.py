@@ -228,11 +228,12 @@ class ForgotPasswordView(APIView):
 
         # Enviar correo
         # 4. Enviar el correo
+        # En ForgotPasswordView:
         EmailThread(
-                '¡Bienvenido a MercaMax! Activa tu cuenta',
-                f'Hola {user.first_name},\n\nPor favor, haz clic en el siguiente enlace para activar tu cuenta y establecer tu contraseña:\n\n{activation_link}\n\nGracias,\nEl equipo de MercaMax.',
-                settings.DEFAULT_FROM_EMAIL,
-                [user.email]
+            'Restablece tu contraseña en MercaMax',
+            f'Hola {user.first_name},\n\nHaz clic en el siguiente enlace para restablecer tu contraseña:\n{reset_link}\n\nSi no solicitaste este cambio, ignora este correo.',
+            settings.DEFAULT_FROM_EMAIL,
+            [user.email]
         ).start()
         from core.models import PasswordResetRequest
         PasswordResetRequest.objects.create (user = user, email_sent = True)
