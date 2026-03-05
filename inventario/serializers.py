@@ -38,7 +38,7 @@ class ProductoSerializer(serializers.ModelSerializer):
         
         # Cálculo del Costo Promedio Ponderado
         valor_total_inventario = instance.lotes.aggregate(
-            total_valor=Sum(F('stock_items__cantidad') * F('costo_compra_lote'))
+            total_valor=Sum(F('stock_items__cantidad') * F('costo_unitario'))
         )['total_valor'] or 0
 
         if stock_total > 0:
