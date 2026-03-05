@@ -54,4 +54,17 @@ class Producto(models.Model):
         if cantidad_total > 0:
             return valor_total / cantidad_total
         return 0
+    
+    @property
+    def costo_compra(self):
+        """
+        Devuelve siempre el costo unitario del último lote que ingresó.
+        Si no hay lotes, devuelve 0.
+        """
+        # Ordenamos los lotes del más reciente al más antiguo y tomamos el primero
+        ultimo_lote = self.lotes.order_by('-fecha_recepcion').first()
+        
+        if ultimo_lote:
+            return float(ultimo_lote.costo_unitario)
+        return 0.00
 

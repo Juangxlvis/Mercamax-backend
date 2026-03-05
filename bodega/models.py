@@ -43,9 +43,21 @@ class Lote(models.Model):
         decimal_places=2, 
         verbose_name="Costo Unitario"
     ) 
+    
+    cantidad_inicial = models.PositiveIntegerField(
+        help_text="Cantidad total de unidades que llegaron en la factura de este lote",
+        default=0 
+    )
        
     def __str__(self):
-        return f"{self.producto.nombre} - Lote {self.codigo_lote}"
+        return f"{self.producto.nombre} - Lote {self.codigo_lote} ({self.cantidad_inicial} unds)"
+
+    @property
+    def cantidad_sin_ubicar(self):
+        """Calcula cuántas unidades de este lote faltan por asignar a un estante/bodega"""
+        from django.db.models import Sum
+        ubicados = self.stock_items.aggregate(total=Sum('cantidad'))['total'] or 0
+        return self.cantidad_inicial - ubicados
     
 
 class StockItem(models.Model):
