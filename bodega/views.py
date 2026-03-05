@@ -8,6 +8,7 @@ from ventas.models import DetalleVenta #Necesitamos importar datos de ventas
 from inventario.models import Producto
 from rest_framework.response import Response
 from rest_framework import status
+from django.db import models
 
 from rest_framework import viewsets
 from .models import CategoriaUbicacion, Ubicacion, Lote, StockItem, AjusteInventario
@@ -24,12 +25,12 @@ class LowStockAlertView(APIView):
     def get(self, request, *args, **kwargs):
         # Usamos 'annotate' para calcular la suma del campo 'cantidad' de todos los StockItem relacionados
         productos_con_stock = Producto.objects.annotate(
-            stock_total=Sum('lotes__stock_items__cantidad')
+            stock_calculado=Sum('lotes__stock_items__cantidad')
         )
         
         # Filtramos los productos donde el stock_total es menor o igual al stock_minimo
         productos_en_alerta = productos_con_stock.filter(
-            stock_total__lte=models.F('stock_minimo')
+            stock_calculado__lte=models.F('stock_minimo')
         )
 
         # Preparamos los datos para la respuesta
@@ -38,8 +39,8 @@ class LowStockAlertView(APIView):
                 'id': producto.id,
                 'nombre': producto.nombre,
                 'stock_minimo': producto.stock_minimo,
-                'stock_total': producto.stock_total,
-                'mensaje': f"¡Stock bajo! Quedan {producto.stock_total} de un mínimo de {producto.stock_minimo}."
+                'stock_total': producto.stock_calculado,
+                'mensaje': f"¡Stock bajo! Quedan {producto.stock_calculado} de un mínimo de {producto.stock_minimo}."
             }
             for producto in productos_en_alerta
         ]
