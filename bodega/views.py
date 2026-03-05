@@ -84,36 +84,34 @@ class StockValuationReportView(APIView):
     basado en el costo promedio ponderado de cada producto.
     """
     def get(self, request, *args, **kwargs):
+        # En bodega/views.py (dentro de StockValuationReportView)
         productos = Producto.objects.annotate(
-            # Suma la cantidad total de cada producto en stock
-            stock_total=Sum('lotes__stock_items__cantidad'),
-            # Calcula el valor total de cada lote (cantidad * costo_lote)
-            valor_lote=ExpressionWrapper(
-                F('lotes__stock_items__cantidad') * F('lotes__costo_compra_lote'),
-                output_field=DecimalField()
-            )
-        ).annotate(
-            # Suma el valor de todos los lotes para obtener el valor total del producto
-            valor_total_producto=Sum('valor_lote')
-        ).filter(stock_total__gt=0) # Solo productos con stock
+            stock_calculado=Sum('lotes__stock_items__cantidad'), # Cambiamos el nombre aquí
+            valor_total=Sum(F('lotes__stock_items__cantidad') * F('lotes__costo_unitario'))
+        )
 
-        report_data = []
+        datos = []
         valor_total_inventario = 0
 
         for producto in productos:
-            costo_promedio = producto.valor_total_producto / producto.stock_total
-            valor_total_inventario += producto.valor_total_producto
-            report_data.append({
-                'producto_id': producto.id,
-                'producto_nombre': producto.nombre,
-                'stock_total': producto.stock_total,
-                'costo_promedio_ponderado': round(costo_promedio, 2),
-                'valor_total_producto': round(producto.valor_total_producto, 2)
-            })
+            # Usamos el nuevo nombre 'stock_calculado'
+            cantidad = producto.stock_calculado or 0 
+            valor = producto.valor_total or 0
+
+            # Solo mostramos productos que realmente tienen stock
+            if cantidad > 0: 
+                datos.append({
+                    "producto_id": producto.id,
+                    "producto_nombre": producto.nombre,
+                    "categoria": producto.categoria.nombre if producto.categoria else "Sin categoría",
+                    "cantidad_total": cantidad,
+                    "valor_total": round(valor, 2)
+                })
+                valor_total_inventario += valor
 
         return Response({
             'valor_total_inventario': round(valor_total_inventario, 2),
-            'detalle_productos': report_data
+            'detalle_productos': datos
         })
 
 class InventoryTurnoverReportView(APIView):
