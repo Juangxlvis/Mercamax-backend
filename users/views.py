@@ -18,6 +18,9 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
 from rest_framework.permissions import IsAuthenticated, AllowAny
+import secrets
+from django.utils import timezone
+from datetime import timedelta
 
 class EmailThread(threading.Thread):
     def __init__(self, subject, message, from_email, recipient_list):
