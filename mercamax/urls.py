@@ -10,6 +10,9 @@ urlpatterns = [
     path('api/users/', include('users.urls')),
     path('api/bodega/', include('bodega.urls')),
 
+    #Notificaciones
+    path('api/', include('core.urls')),
+
     # Autenticación principal
     path('api/auth/login/', LoginView.as_view(), name='custom-login'),
     path('api/auth/verify-2fa/', Verify2FAView.as_view(), name = 'verify-2fa'),
