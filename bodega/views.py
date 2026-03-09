@@ -9,6 +9,8 @@ from inventario.models import Producto
 from rest_framework.response import Response
 from rest_framework import status
 from django.db import models
+from core.views import generar_notificaciones_stock, generar_notificaciones_vencimiento
+
 
 from rest_framework import viewsets
 from .models import CategoriaUbicacion, Ubicacion, Lote, StockItem, AjusteInventario
@@ -225,3 +227,18 @@ class TipoUbicacionView(APIView):
             for choice in Ubicacion.TipoUbicacion.choices
         ]
         return Response(tipos, status=status.HTTP_200_OK)
+    
+
+class LowStockAlertView(APIView):
+    def get(self, request, *args, **kwargs):
+        # ✅ Genera las notificaciones al consultar alertas
+        generar_notificaciones_stock()
+        
+        # ... resto del código existente igual
+
+class ExpiringLotsAlertView(APIView):
+    def get(self, request, *args, **kwargs):
+        # ✅ Genera las notificaciones al consultar alertas
+        generar_notificaciones_vencimiento()
+        
+        # ... resto del código existente igual
