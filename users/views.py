@@ -127,7 +127,7 @@ class LoginView(APIView):
                 code = totp.now()
 
                 # NUEVO CÓDIGO (Asíncrono y ultra rápido)
-                send_2fa_email(to_email=user.email, codigo=code)
+                send_2fa_email(to_email=user.email, codigo=code, nombre=user.first_name)
                 temp_token, _ = Token.objects.get_or_create(user=user)
 
                 return Response({"step": "2fa_required", "token": temp_token.key})
