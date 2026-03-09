@@ -34,6 +34,10 @@ class LoteSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class StockItemSerializer(serializers.ModelSerializer):
+    lote_codigo = serializers.CharField(source='lote.codigo_lote', read_only=True)
+    ubicacion_nombre = serializers.CharField(source='ubicacion.nombre', read_only=True)
+    producto_nombre = serializers.CharField(source='lote.producto.nombre', read_only=True)
+    
     class Meta:
         model = StockItem
         fields = '__all__'
