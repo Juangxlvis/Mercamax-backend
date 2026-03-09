@@ -26,6 +26,9 @@ class UbicacionSerializer(serializers.ModelSerializer):
         return value
 
 class LoteSerializer(serializers.ModelSerializer):
+    cantidad_sin_ubicar = serializers.ReadOnlyField()
+    producto_nombre = serializers.CharField(source='producto.nombre', read_only=True)
+
     class Meta:
         model = Lote
         fields = '__all__'
