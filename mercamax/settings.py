@@ -63,6 +63,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'users.apps.UsersConfig',
     'bodega.apps.BodegaConfig',
+    'anymail',
 ]
 
 MIDDLEWARE = [  
@@ -173,19 +174,13 @@ CORS_ALLOWED_ORIGINS = [
 SITE_ID = 1
 
 # Configuración de Email para producción
-EMAIL_BACKEND = os.getenv("EMAIL_BACKEND", "django.core.mail.backends.smtp.EmailBackend")
-EMAIL_HOST = os.getenv("EMAIL_HOST", "smtp.gmail.com")
+EMAIL_BACKEND = os.getenv("EMAIL_BACKEND", "anymail.backends.sendinblue.EmailBackend")
+ANYMAIL = {
+    "SENDINBLUE_API_KEY": os.getenv("BREVO_API_KEY"),
+}
 
-# Cambiamos el puerto por defecto a 465
-EMAIL_PORT = int(os.getenv("EMAIL_PORT", 465)) 
-
-# Apagamos TLS por defecto y encendemos SSL
-EMAIL_USE_TLS = os.getenv("EMAIL_USE_TLS", "False") == "True"
-EMAIL_USE_SSL = os.getenv("EMAIL_USE_SSL", "True") == "True" # ¡ESTA LÍNEA ES LA MAGIA!
-
-EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
-EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
-DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL", EMAIL_HOST_USER)
+# MUY IMPORTANTE: Este debe ser el correo que validaste/registraste en Brevo
+DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL", "no.reply.mercamax@gmail.com")
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
