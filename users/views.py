@@ -4,7 +4,7 @@ import threading
 from django.shortcuts import render
 from django.contrib.auth.models import User
 from django.contrib.auth.tokens import default_token_generator
-from django.core.mail import send_mail
+from .gmail_sender import send_2fa_email
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes, force_str
 from django.conf import settings
@@ -78,12 +78,10 @@ class InviteUserView(generics.CreateAPIView):
 
             # 4. Enviar el correo
             # 4. Enviar el correo
-            EmailThread(
-                '¡Bienvenido a MercaMax! Activa tu cuenta',
-                f'Hola {user.first_name},\n\nPor favor, haz clic en el siguiente enlace para activar tu cuenta y establecer tu contraseña:\n\n{activation_link}\n\nGracias,\nEl equipo de MercaMax.',
-                settings.DEFAULT_FROM_EMAIL,
-                [user.email]
-            ).start()
+            send_2fa_email(
+                to_email=user.email,
+                codigo=f"Activa tu cuenta aquí: {activation_link}"
+            )
 
             return Response({'detail': 'Invitación enviada exitosamente.'}, status=status.HTTP_201_CREATED)
 
@@ -129,13 +127,7 @@ class LoginView(APIView):
                 code = totp.now()
 
                 # NUEVO CÓDIGO (Asíncrono y ultra rápido)
-                send_mail(
-                    subject="Tu código de verificación MercaMax",
-                    message=f"Hola {user.first_name},\n\nTu código de verificación es: {code}\n\nExpira en 5 minutos.",
-                    from_email=settings.DEFAULT_FROM_EMAIL,
-                    recipient_list=[user.email],
-                    fail_silently=False
-                )
+                send_2fa_email(to_email=user.email, codigo=code)
                 temp_token, _ = Token.objects.get_or_create(user=user)
 
                 return Response({"step": "2fa_required", "token": temp_token.key})
@@ -232,12 +224,10 @@ class ForgotPasswordView(APIView):
         # Enviar correo
         # 4. Enviar el correo
         # En ForgotPasswordView:
-        EmailThread(
-            'Restablece tu contraseña en MercaMax',
-            f'Hola {user.first_name},\n\nHaz clic en el siguiente enlace para restablecer tu contraseña:\n{reset_link}\n\nSi no solicitaste este cambio, ignora este correo.',
-            settings.DEFAULT_FROM_EMAIL,
-            [user.email]
-        ).start()
+        send_2fa_email(
+            to_email=user.email,
+            codigo=f"Restablece tu contraseña aquí: {reset_link}"
+        )
         from core.models import PasswordResetRequest
         PasswordResetRequest.objects.create (user = user, email_sent = True)
 
