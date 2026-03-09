@@ -9,7 +9,6 @@ from inventario.models import Producto
 from rest_framework.response import Response
 from rest_framework import status
 from django.db import models
-from core.views import generar_notificaciones_stock, generar_notificaciones_vencimiento
 
 
 from rest_framework import viewsets
