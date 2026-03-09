@@ -11,3 +11,6 @@ db.sqlite3
 
 #Ignora la carpeta staticfiles
 staticfiles/
+#ignorar caché
+__pycache__/
+*.pyc

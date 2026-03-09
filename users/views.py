@@ -129,13 +129,13 @@ class LoginView(APIView):
                 code = totp.now()
 
                 # NUEVO CÓDIGO (Asíncrono y ultra rápido)
-                EmailThread(
+                send_mail(
                     subject="Tu código de verificación MercaMax",
                     message=f"Hola {user.first_name},\n\nTu código de verificación es: {code}\n\nExpira en 5 minutos.",
                     from_email=settings.DEFAULT_FROM_EMAIL,
-                    recipient_list=[user.email]
-                ).start() # <--- El .start() es la magia que lanza el hilo
-
+                    recipient_list=[user.email],
+                    fail_silently=False
+                )
                 temp_token, _ = Token.objects.get_or_create(user=user)
 
                 return Response({"step": "2fa_required", "token": temp_token.key})
