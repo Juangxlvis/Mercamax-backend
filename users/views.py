@@ -21,6 +21,7 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 import secrets
 from django.utils import timezone
 from datetime import timedelta
+import os
 
 class EmailThread(threading.Thread):
     def __init__(self, subject, message, from_email, recipient_list):
