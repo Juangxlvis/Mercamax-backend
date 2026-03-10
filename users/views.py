@@ -74,7 +74,8 @@ class InviteUserView(generics.CreateAPIView):
             # 3. Generar token y link de activación
             token = default_token_generator.make_token(user)
             uid = urlsafe_base64_encode(force_bytes(user.pk))
-            activation_link = f"http://localhost:4200/activar-cuenta/{uid}/{token}" # URL del frontend
+            frontend_url = os.getenv('FRONTEND_URL', 'http://localhost:4200')
+            activation_link = f"{frontend_url}/activar-cuenta/{uid}/{token}"
 
             # 4. Enviar el correo
             # 4. Enviar el correo
@@ -219,8 +220,8 @@ class ForgotPasswordView(APIView):
 
         token = default_token_generator.make_token(user)
         uid = urlsafe_base64_encode(force_bytes(user.pk))
-        reset_link = f"http://localhost:4200/reset-password-confirm/{uid}/{token}"  # link del frontend
-
+        frontend_url = os.getenv('FRONTEND_URL', 'http://localhost:4200')
+        reset_link = f"{frontend_url}/reset-password-confirm/{uid}/{token}"
         # Enviar correo
         # 4. Enviar el correo
         # En ForgotPasswordView:
