@@ -168,7 +168,8 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:4200",
     "http://127.0.0.1:4200",
-    "https://mercamax-frontend.vercel.app", # Puerto por defecto de Angular
+    "https://mercamax-frontend-delta.vercel.app",
+    "https://mercamax-frontend-r5kt85jys-juan-galvis-projects-f0ff2a8e.vercel.app", # Puerto por defecto de Angular
 ]
 
 SITE_ID = 1
