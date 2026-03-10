@@ -80,3 +80,15 @@ class MarcarTodasLeidasView(APIView):
             leida=False
         ).update(leida=True)
         return Response({'detail': 'Todas las notificaciones marcadas como leídas.'})
+    
+
+class EliminarNotificacionView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def delete(self, request, pk):
+        try:
+            notif = Notificacion.objects.get(pk=pk, usuario_destino=request.user)
+            notif.delete()
+            return Response({'detail': 'Notificación eliminada.'})
+        except Notificacion.DoesNotExist:
+            return Response({'error': 'No encontrada.'}, status=404)
