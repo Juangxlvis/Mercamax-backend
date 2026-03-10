@@ -56,7 +56,7 @@ class StockItemSerializer(serializers.ModelSerializer):
                 ubicacion=ubicacion
             ).aggregate(total=Sum('cantidad'))
 
-            stock_actual = stock_actual_agregado.get('total', 0) # <-- CAMBIO CLAVE AQUÍ
+            stock_actual = stock_actual_agregado.get('total') or 0# <-- CAMBIO CLAVE AQUÍ
 
             # 2. Calculamos cuál sería el nuevo total
             nuevo_total = stock_actual + cantidad_a_anadir

@@ -227,17 +227,3 @@ class TipoUbicacionView(APIView):
         ]
         return Response(tipos, status=status.HTTP_200_OK)
     
-
-class LowStockAlertView(APIView):
-    def get(self, request, *args, **kwargs):
-        # ✅ Genera las notificaciones al consultar alertas
-        generar_notificaciones_stock()
-        
-        # ... resto del código existente igual
-
-class ExpiringLotsAlertView(APIView):
-    def get(self, request, *args, **kwargs):
-        # ✅ Genera las notificaciones al consultar alertas
-        generar_notificaciones_vencimiento()
-        
-        # ... resto del código existente igual
