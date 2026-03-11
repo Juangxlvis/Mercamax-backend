@@ -169,7 +169,8 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:4200",
     "http://127.0.0.1:4200",
     "https://mercamax-frontend-delta.vercel.app",
-    "https://mercamax-frontend-r5kt85jys-juan-galvis-projects-f0ff2a8e.vercel.app", # Puerto por defecto de Angular
+    "https://mercamax-frontend-r5kt85jys-juan-galvis-projects-f0ff2a8e.vercel.app",
+    "https://main.d3kfb4phnou8ar.amplifyapp.com/", # Puerto por defecto de Angular
 ]
 
 SITE_ID = 1
