@@ -1,1 +1,1 @@
-web: gunicorn mercamax.wsgi --log-file -
+web: gunicorn mercamax.wsgi --log-file - --bind 0.0.0.0:8000
