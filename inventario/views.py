@@ -26,6 +26,17 @@ class ProductoViewSet(viewsets.ModelViewSet):
     queryset = Producto.objects.all()
     serializer_class = ProductoSerializer
 
+    def destroy(self, request, *args, **kwargs):
+        try:
+            return super().destroy(request, *args, **kwargs)
+        except Exception as e:
+            import traceback
+            print("ERROR AL ELIMINAR PRODUCTO:", traceback.format_exc())
+            return Response(
+                {"error": str(e), "detalle": traceback.format_exc()},
+                status=500
+            )
+
 class CategoriaProductoListView(generics.ListAPIView):
     queryset = CategoriaProducto.objects.all()
     serializer_class = CategoriaProductoSerializer
