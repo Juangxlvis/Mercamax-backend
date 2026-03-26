@@ -9,6 +9,8 @@ from inventario.models import Producto
 from rest_framework.response import Response
 from rest_framework import status
 from django.db import models
+from django.db.models import ProtectedError
+
 
 
 from rest_framework import viewsets
@@ -208,14 +210,41 @@ class UbicacionViewSet(viewsets.ModelViewSet):
     queryset = Ubicacion.objects.all()
     serializer_class = UbicacionSerializer
 
+    def destroy(self, request, *args, **kwargs):
+        try:
+            return super().destroy(request, *args, **kwargs)
+        except ProtectedError:
+            return Response(
+                {"error": "No se puede eliminar esta ubicación porque tiene stock asignado."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
 class LoteViewSet(viewsets.ModelViewSet):
     queryset = Lote.objects.all()
     serializer_class = LoteSerializer
+
+    def destroy(self, request, *args, **kwargs):
+        try:
+            return super().destroy(request, *args, **kwargs)
+        except ProtectedError:
+            return Response(
+                {"error": "No se puede eliminar este lote porque tiene stock items asociados."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
 
 class StockItemViewSet(viewsets.ModelViewSet):
     queryset = StockItem.objects.all()
     serializer_class = StockItemSerializer
 
+    def destroy(self, request, *args, **kwargs):
+        try:
+            return super().destroy(request, *args, **kwargs)
+        except ProtectedError:
+            return Response(
+                {"error": "No se puede eliminar este stock porque tiene ajustes de inventario asociados."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
 class TipoUbicacionView(APIView):
     """
     Devuelve la lista de tipos de ubicación disponibles desde el modelo Ubicacion.

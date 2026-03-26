@@ -16,6 +16,10 @@ from django.utils import timezone
 from datetime import timedelta
 from rest_framework.decorators import permission_classes
 from rest_framework.permissions import AllowAny
+from django.db.models import ProtectedError
+from rest_framework import status
+
+
 
 
 class ProveedorViewSet(viewsets.ModelViewSet):
@@ -29,12 +33,10 @@ class ProductoViewSet(viewsets.ModelViewSet):
     def destroy(self, request, *args, **kwargs):
         try:
             return super().destroy(request, *args, **kwargs)
-        except Exception as e:
-            import traceback
-            print("ERROR AL ELIMINAR PRODUCTO:", traceback.format_exc())
+        except ProtectedError:
             return Response(
-                {"error": str(e), "detalle": traceback.format_exc()},
-                status=500
+                {"error": "No se puede eliminar este producto porque tiene lotes o ventas asociadas."},
+                status=status.HTTP_400_BAD_REQUEST
             )
 
 class CategoriaProductoListView(generics.ListAPIView):
