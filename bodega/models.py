@@ -34,7 +34,7 @@ class Ubicacion(models.Model):
         return self.nombre
     
 class Lote(models.Model):
-    producto = models.ForeignKey('inventario.Producto', on_delete=models.CASCADE, related_name='lotes')
+    producto = models.ForeignKey('inventario.Producto', on_delete=models.PROTECT, related_name='lotes')
     codigo_lote = models.CharField(max_length=100, unique=True, help_text="Código o número de remisión del proveedor")
     fecha_recepcion = models.DateTimeField(auto_now_add=True)
     fecha_caducidad = models.DateField()
@@ -61,7 +61,7 @@ class Lote(models.Model):
     
 
 class StockItem(models.Model):
-    lote = models.ForeignKey(Lote, on_delete=models.CASCADE, related_name='stock_items')
+    lote = models.ForeignKey(Lote, on_delete=models.PROTECT, related_name='stock_items')
     ubicacion = models.ForeignKey(Ubicacion, on_delete=models.PROTECT, related_name='stock_items')
     cantidad = models.PositiveIntegerField()
 

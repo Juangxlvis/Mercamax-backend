@@ -20,8 +20,6 @@ from django.db.models import ProtectedError
 from rest_framework import status
 
 
-
-
 class ProveedorViewSet(viewsets.ModelViewSet):
     queryset = Proveedor.objects.all()
     serializer_class = ProveedorSerializer
