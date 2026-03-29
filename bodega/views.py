@@ -207,7 +207,7 @@ class CategoriaUbicacionViewSet(viewsets.ModelViewSet):
     serializer_class = CategoriaUbicacionSerializer
 
 class UbicacionViewSet(viewsets.ModelViewSet):
-    queryset = Ubicacion.objects.all()
+    queryset = Ubicacion.objects.select_related('categoria', 'parent').all()
     serializer_class = UbicacionSerializer
 
     def destroy(self, request, *args, **kwargs):
@@ -233,7 +233,7 @@ class LoteViewSet(viewsets.ModelViewSet):
             )
 
 class StockItemViewSet(viewsets.ModelViewSet):
-    queryset = StockItem.objects.all()
+    queryset = StockItem.objects.select_related('ubicacion', 'lote__producto').all()
     serializer_class = StockItemSerializer
 
     def destroy(self, request, *args, **kwargs):
