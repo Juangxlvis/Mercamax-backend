@@ -22,3 +22,5 @@ __pycache__/
 
 #Credenciales Google Auth
 get_token.py
+
+datos_mercamax.json

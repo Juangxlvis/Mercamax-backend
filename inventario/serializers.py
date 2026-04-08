@@ -9,7 +9,7 @@ class ProductoSerializer(serializers.ModelSerializer):
     stock_total = serializers.ReadOnlyField()
     costo_promedio_ponderado = serializers.ReadOnlyField()
     costo_compra = serializers.ReadOnlyField() # <-- ¡Aquí está nuestro nuevo campo!
-    
+    porcentaje_iva = serializers.DecimalField(max_digits=5, decimal_places=2, required=False, default=0.00)
     categoria_nombre = serializers.CharField(source='categoria.nombre', read_only=True)
 
     class Meta:
@@ -18,7 +18,7 @@ class ProductoSerializer(serializers.ModelSerializer):
         fields = [
             'id', 'nombre', 'codigo_barras', 'descripcion', 
             'precio_venta', 'costo_compra', 'stock_minimo', 'categoria', 'categoria_nombre','proveedor',
-            'stock_total', 'costo_promedio_ponderado' 
+            'stock_total', 'costo_promedio_ponderado', 'porcentaje_iva' 
         ]
 
 class ProveedorSerializer(serializers.ModelSerializer):

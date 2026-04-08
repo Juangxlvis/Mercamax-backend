@@ -9,6 +9,7 @@ urlpatterns = [
     path('api/inventario/', include('inventario.urls')),
     path('api/users/', include('users.urls')),
     path('api/bodega/', include('bodega.urls')),
+    path('api/ventas/', include('ventas.urls')),
 
     #Notificaciones
     path('api/', include('core.urls')),
@@ -23,4 +24,6 @@ urlpatterns = [
     path('api/auth/registration/', include('dj_rest_auth.registration.urls')),
     
     path('accounts/', include('allauth.urls')),
+
+
 ]

@@ -23,6 +23,13 @@ class Producto(models.Model):
     descripcion = models.TextField(blank=True)
     precio_venta = models.DecimalField(max_digits=10, decimal_places=2)
     stock_minimo = models.PositiveIntegerField(default=10, verbose_name="Punto de Reorden") # Punto de reorden 
+    porcentaje_iva = models.DecimalField(
+    max_digits=5,
+    decimal_places=2,
+    default=0.00,
+    verbose_name="IVA (%)",
+    help_text="Porcentaje de IVA del producto. Ej: 0, 5, 19"
+    )
     categoria = models.ForeignKey(CategoriaProducto, on_delete=models.PROTECT, null=True, blank=True)
     proveedor = models.ForeignKey(Proveedor, on_delete=models.PROTECT) # Cada producto tiene un proveedor
 
