@@ -34,8 +34,6 @@ def generar_pdf_factura(venta) -> bytes:
 
     # ── Encabezado ──────────────────────────────────────────────
     elementos.append(Paragraph("MercaMax", estilo('titulo', 22, bold=True, color=verde)))
-    elementos.append(Paragraph("Sistema de Gestión de Supermercado",
-                                estilo('sub', 10, color=gris_oscuro)))
     elementos.append(Spacer(1, 0.3*cm))
     elementos.append(HRFlowable(width="100%", thickness=2, color=verde))
     elementos.append(Spacer(1, 0.4*cm))

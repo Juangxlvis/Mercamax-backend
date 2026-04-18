@@ -21,6 +21,8 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 import secrets
 from django.utils import timezone
 from datetime import timedelta
+from axes.models import AccessAttempt
+from django.contrib.auth.hashers import make_password
 import os
 
 class EmailThread(threading.Thread):
@@ -62,10 +64,9 @@ class InviteUserView(generics.CreateAPIView):
                 username=data['email'],
                 email=data['email'],
                 first_name=data['first_name'],
-                is_active=False
+                is_active=False,
+                password=make_password(None)  # ← directamente en el create, un solo INSERT
             )
-            user.set_unusable_password()
-            user.save()
 
             # 2. Asignar el perfil y el rol
             perfil = PerfilUsuario.objects.get(user=user)
@@ -95,8 +96,17 @@ class InviteUserView(generics.CreateAPIView):
 
 class LoginView(APIView):
     permission_classes = [AllowAny]
+    
     def post(self, request):
-        serializer = LoginSerializer(data=request.data)
+        username = request.data.get('username', '')
+        intentos = AccessAttempt.objects.filter(username=username).first()
+        if intentos and intentos.failures_since_start >= 5:
+            return Response(
+                {"detail": "Cuenta bloqueada temporalmente por múltiples intentos fallidos. Intenta de nuevo en 1 hora."},
+                status=429
+            )
+
+        serializer = LoginSerializer(data=request.data, context={'request': request})
         if serializer.is_valid():
             user = serializer.validated_data["user"]
             print(f"Sending 2FA email to: {user.email}")  # Debug log

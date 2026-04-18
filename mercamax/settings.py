@@ -64,6 +64,7 @@ INSTALLED_APPS = [
     'users.apps.UsersConfig',
     'bodega.apps.BodegaConfig',
     'anymail',
+    'axes',
 ]
 
 MIDDLEWARE = [  
@@ -77,6 +78,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'allauth.account.middleware.AccountMiddleware', 
+    'axes.middleware.AxesMiddleware',
 ]
 
 ROOT_URLCONF = 'mercamax.urls'
@@ -212,6 +214,7 @@ SESSION_SAVE_EVERY_REQUEST = True
 ACCOUNT_ADAPTER = "allauth_2fa.adapter.OTPAdapter"
 
 AUTHENTICATION_BACKENDS = (
+    'axes.backends.AxesStandaloneBackend',
     'django.contrib.auth.backends.ModelBackend',
     'allauth.account.auth_backends.AuthenticationBackend',
 )
@@ -225,3 +228,11 @@ sentry_sdk.init(
     # of sampled transactions for slow queries.
     profiles_sample_rate=1.0,
 )
+
+AXES_FAILURE_LIMIT = 5           # bloquea al 5° intento fallido
+AXES_COOLOFF_TIME = 1            # 1 hora de bloqueo
+AXES_LOCKOUT_CALLABLE = None     # usa respuesta 403 por defecto
+AXES_RESET_ON_SUCCESS = True
+AXES_LOCKOUT_PARAMETERS = ['username']
+AXES_HTTP_RESPONSE_CODE = 429  
+SILENCED_SYSTEM_CHECKS = ['axes.W006']

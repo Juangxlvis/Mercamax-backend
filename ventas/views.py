@@ -108,7 +108,7 @@ class VentaViewSet(viewsets.ReadOnlyModelViewSet):
 
                     producto = stock_item.lote.producto
                     precio_unitario = producto.precio_venta
-                    iva_producto = producto.porcentaje_iva  # ✅ IVA individual
+                    iva_producto = producto.porcentaje_iva
 
                     subtotal_linea = Decimal(str(cantidad)) * precio_unitario
                     impuesto_linea = subtotal_linea * (iva_producto / Decimal('100'))
@@ -127,7 +127,7 @@ class VentaViewSet(viewsets.ReadOnlyModelViewSet):
                         total_linea=subtotal_linea + impuesto_linea
                     )
 
-                # Guardar totales en la venta
+                # Guardar totales
                 venta.subtotal = subtotal_total
                 venta.total_impuestos = impuestos_total
                 venta.total = subtotal_total + impuestos_total
@@ -137,12 +137,30 @@ class VentaViewSet(viewsets.ReadOnlyModelViewSet):
                 numero = f"FAC-{Factura.objects.count() + 1:06d}"
                 Factura.objects.create(venta=venta, numero_factura=numero)
 
-            # Recargar con relaciones
+            # Recargar con relaciones completas
             venta_creada = Venta.objects.select_related(
                 'cajero', 'cliente', 'factura'
             ).prefetch_related(
                 'detalleventa_set__stock_item__lote__producto'
             ).get(id=venta.id)
+
+            # ── Envío de factura por correo (no bloquea la venta) ──────
+            try:
+                cliente_obj = venta_creada.cliente
+                if cliente_obj and cliente_obj.email:
+                    from users.gmail_sender import send_factura_email
+                    pdf_bytes = generar_pdf_factura(venta_creada)
+                    total_fmt = f"${float(venta_creada.total):,.0f} COP"
+                    send_factura_email(
+                        to_email=cliente_obj.email,
+                        nombre=cliente_obj.nombre,
+                        numero_factura=venta_creada.factura.numero_factura,
+                        total=total_fmt,
+                        pdf_bytes=pdf_bytes
+                    )
+            except Exception as e:
+                # Falla silenciosamente — la venta ya está guardada
+                print(f"[AVISO] No se pudo enviar correo de factura: {e}")
 
             return Response(VentaSerializer(venta_creada).data, status=status.HTTP_201_CREATED)
 
@@ -150,7 +168,7 @@ class VentaViewSet(viewsets.ReadOnlyModelViewSet):
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
             return Response({"error": f"Error interno: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
+        
     @action(detail=True, methods=['post'], url_path='anular')
     def anular_venta(self, request, pk=None):
         venta = self.get_object()
