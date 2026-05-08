@@ -1,0 +1,32 @@
+name: CI/CD MercaMax Backend
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    name: Deploy to Google Cloud Run
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout código
+        uses: actions/checkout@v3
+
+      - name: Autenticar con Google Cloud
+        uses: google-github-actions/auth@v1
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - name: Configurar Google Cloud SDK
+        uses: google-github-actions/setup-gcloud@v1
+        with:
+          project_id: mercamax-backend
+
+      - name: Deploy a Cloud Run
+        run: |
+          gcloud run deploy mercamax-backend \
+            --source . \
+            --region us-central1 \
+            --allow-unauthenticated \
+            --project mercamax-backend
