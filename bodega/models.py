@@ -35,6 +35,13 @@ class Ubicacion(models.Model):
     
 class Lote(models.Model):
     producto = models.ForeignKey('inventario.Producto', on_delete=models.PROTECT, related_name='lotes')
+    proveedor = models.ForeignKey(
+        'inventario.Proveedor',
+        on_delete=models.SET_NULL,
+        null=True, blank=True,
+        related_name='lotes',
+        help_text="Proveedor del que proviene este lote"
+    )
     codigo_lote = models.CharField(max_length=100, unique=True, help_text="Código o número de remisión del proveedor")
     fecha_recepcion = models.DateTimeField(auto_now_add=True)
     fecha_caducidad = models.DateField()

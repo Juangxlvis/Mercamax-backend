@@ -10,6 +10,7 @@ urlpatterns = [
     path('api/users/', include('users.urls')),
     path('api/bodega/', include('bodega.urls')),
     path('api/ventas/', include('ventas.urls')),
+    path('api/compras/', include('compras.urls')),
 
     #Notificaciones
     path('api/', include('core.urls')),

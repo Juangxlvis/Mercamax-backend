@@ -70,7 +70,7 @@ class InviteUserView(generics.CreateAPIView):
 
             # 2. Asignar el perfil y el rol
             perfil = PerfilUsuario.objects.get(user=user)
-            perfil.rol = data['rol']
+            perfil.rol = data['rol'] 
             perfil.save()
 
             # 3. Generar token y link de activación
