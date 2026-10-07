@@ -401,7 +401,7 @@ ng test --watch=false --browsers=ChromeHeadless
 
 ### TestRail
 
-Resultados registrados en [mercamax.testrail.io](https://mercamax.testrail.io) — 24 casos de prueba con 100% Passed.
+Resultados registrados en https://drive.google.com/file/d/1lnHrUdw2eUVYTpnzC0S9NLd7pOhp1Yw7/view?usp=sharing — 24 casos de prueba con 100% Passed.
 
 ---
 
@@ -409,7 +409,7 @@ Resultados registrados en [mercamax.testrail.io](https://mercamax.testrail.io) �
 
 Dashboard de Grafana Cloud disponible en:
 ```
-https://galvis2044.grafana.net
+[https://galvis2044.grafana.net](https://galvis2044.grafana.net/goto/sqlhdn)
 ```
 
 Métricas monitoreadas:
@@ -434,7 +434,7 @@ Métricas monitoreadas:
 
 ## 🔗 Repositorios relacionados
 
-- **Frontend (Angular 17):** `Mercamax-frontend` — desplegado en AWS Amplify.
+- **Frontend (Angular 17):** `[Mercamax-frontend](https://github.com/Juangxlvis/mercamax-frontend.git)` — desplegado en AWS Amplify.
 
 ---
 
